@@ -11,6 +11,7 @@ import ru.practicum.shareit.user.User;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Repository
@@ -34,7 +35,7 @@ public class InMemoryItemStorage implements ItemStorage {
     public List<Item> getUserItem(Long id) {
         log.info("Getting user item with id {}", id);
         return items.values().stream()
-                .filter(item -> item.getOwner().getId() == id)
+                .filter(item -> Objects.equals(item.getOwner().getId(), id))
                 .collect(Collectors.toList());
     }
 

@@ -10,6 +10,7 @@ import ru.practicum.shareit.user.User;
 import ru.practicum.shareit.user.UserService;
 
 import java.util.List;
+import java.util.Objects;
 
 @Service
 @AllArgsConstructor
@@ -38,7 +39,7 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public Item updateItem(ItemDto itemDto, Long userId, Long itemId) throws NotOwnerException {
-        if (itemStorage.getItem(itemId).getOwner().getId() != userId) {
+        if (!Objects.equals(itemStorage.getItem(itemId).getOwner().getId(), userId)) {
             throw new NotOwnerException("Not owner of this item");
         }
         return itemStorage.updateItem(itemDto, itemId);

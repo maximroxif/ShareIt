@@ -13,6 +13,7 @@ import java.time.LocalDateTime;
  */
 @Data
 @Builder
+@FieldDefaults(level = AccessLevel.PRIVATE)
 public class ItemRequestDto {
     String description;
     User requester;

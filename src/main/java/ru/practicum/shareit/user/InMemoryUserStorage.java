@@ -5,11 +5,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Repository;
 import ru.practicum.shareit.exceptions.DuplicateDataException;
 import ru.practicum.shareit.exceptions.NotFoundException;
-import ru.practicum.shareit.user.dto.UserDto;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 @Repository
 @Slf4j
@@ -19,22 +18,15 @@ public class InMemoryUserStorage implements UserStorage {
     private final Map<Long, User> users;
 
     @Override
-    public List<UserDto> getAllUsers() {
+    public List<User> getAllUsers() {
         log.info("Get all users");
-        List<UserDto> userDtos = new ArrayList<>();
-        for (User user : users.values()) {
-            userDtos.add(UserMapper.toDtoUser(user));
-        }
-        return userDtos;
+        return users.values().stream().toList();
     }
 
     @Override
     public User getUser(Long id) {
         log.info("Get user {}", id);
-        if (users.containsKey(id)) {
-            return users.get(id);
-        }
-        throw new NotFoundException("User not found");
+        return Optional.ofNullable(users.get(id)).orElseThrow(() -> new NotFoundException("User not found"));
     }
 
     @Override
@@ -53,14 +45,16 @@ public class InMemoryUserStorage implements UserStorage {
     @Override
     public User updateUser(User user, Long id) {
         log.info("Update user {}", user);
-        if (user.getEmail() != null) {
-            for (User user1 : users.values()) {
-                if (user.getEmail().equals(user1.getEmail())) {
-                    throw new DuplicateDataException("This email is already in use");
+        if (users.containsKey(id)) {
+            if (user.getEmail() != null) {
+                for (User user1 : users.values()) {
+                    if (user.getEmail().equals(user1.getEmail())) {
+                        if (!user1.getId().equals(id)) {
+                            throw new DuplicateDataException("This email is already in use");
+                        }
+                    }
                 }
             }
-        }
-        if (users.containsKey(id)) {
             User oldUser = users.get(id);
             if (user.getName() != null) {
                 oldUser.setName(user.getName());

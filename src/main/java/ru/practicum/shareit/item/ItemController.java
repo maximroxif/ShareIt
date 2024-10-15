@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import ru.practicum.shareit.exceptions.NotOwnerException;
 import ru.practicum.shareit.item.dto.ItemDto;
-import ru.practicum.shareit.item.model.Item;
 
 import java.util.List;
 
@@ -28,25 +27,25 @@ public class ItemController {
     private final ItemService itemService;
 
     @PostMapping
-    public Item createItem(@RequestBody @Valid ItemDto itemDto,
-                           @RequestHeader("X-Sharer-User-Id") Long userId) {
+    public ItemDto createItem(@RequestBody @Valid ItemDto itemDto,
+                              @RequestHeader("X-Sharer-User-Id") Long userId) {
         return itemService.createItem(itemDto, userId);
     }
 
     @PatchMapping("/{itemId}")
-    public Item updateItem(@RequestBody ItemDto itemDto,
-                           @RequestHeader("X-Sharer-User-Id") Long userId,
-                           @PathVariable Long itemId) throws NotOwnerException {
+    public ItemDto updateItem(@RequestBody ItemDto itemDto,
+                              @RequestHeader("X-Sharer-User-Id") Long userId,
+                              @PathVariable Long itemId) throws NotOwnerException {
         return itemService.updateItem(itemDto, userId, itemId);
     }
 
     @GetMapping("/{id}")
-    public Item getItem(@PathVariable Long id) {
+    public ItemDto getItem(@PathVariable Long id) {
         return itemService.getItem(id);
     }
 
     @GetMapping
-    public List<Item> getUserItems(@RequestHeader("X-Sharer-User-Id") Long userId) {
+    public List<ItemDto> getUserItems(@RequestHeader("X-Sharer-User-Id") Long userId) {
         return itemService.getUserItem(userId);
     }
 

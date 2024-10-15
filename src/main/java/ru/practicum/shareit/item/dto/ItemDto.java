@@ -13,6 +13,7 @@ import lombok.experimental.FieldDefaults;
 @Data
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class ItemDto {
+    Long id;
     @NotBlank
     String name;
     @NotBlank

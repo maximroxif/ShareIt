@@ -13,22 +13,24 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public List<UserDto> getAllUsers() {
-        return userStorage.getAllUsers();
+        return userStorage.getAllUsers().stream().map(UserMapper::toDtoUser).toList();
     }
 
     @Override
-    public User getUser(Long id) {
-        return userStorage.getUser(id);
+    public UserDto getUser(Long id) {
+        return UserMapper.toDtoUser(userStorage.getUser(id));
     }
 
     @Override
-    public User createUser(User user) {
-        return userStorage.createUser(user);
+    public UserDto createUser(UserDto userDto) {
+        User user = UserMapper.toUser(userDto);
+        return UserMapper.toDtoUser(userStorage.createUser(user));
     }
 
     @Override
-    public User updateUser(User user, Long id) {
-        return userStorage.updateUser(user, id);
+    public UserDto updateUser(UserDto userDto, Long id) {
+        User user = UserMapper.toUser(userDto);
+        return UserMapper.toDtoUser(userStorage.updateUser(user, id));
     }
 
     @Override

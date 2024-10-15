@@ -7,6 +7,7 @@ import ru.practicum.shareit.user.User;
 public class ItemMapper {
     public static ItemDto toDto(Item item) {
         return ItemDto.builder()
+                .id(item.getId())
                 .name(item.getName())
                 .description(item.getDescription())
                 .available(String.valueOf(item.isAvailable()))
@@ -14,14 +15,12 @@ public class ItemMapper {
                 .build();
     }
 
-    public static Item fromDto(ItemDto dto, Long id, User user) {
+    public static Item fromDto(ItemDto dto, User user) {
         return Item.builder()
-                .id(id)
                 .name(dto.getName())
                 .description(dto.getDescription())
                 .available(Boolean.parseBoolean(dto.getAvailable()))
                 .owner(user)
-                .request(null)
                 .build();
     }
 }

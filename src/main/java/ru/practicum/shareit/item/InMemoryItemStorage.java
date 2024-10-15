@@ -6,9 +6,7 @@ import org.springframework.stereotype.Repository;
 import ru.practicum.shareit.exceptions.NotFoundException;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.model.Item;
-import ru.practicum.shareit.user.User;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -25,10 +23,7 @@ public class InMemoryItemStorage implements ItemStorage {
     @Override
     public Item getItem(Long id) {
         log.info("Getting item with id {}", id);
-        return items.values().stream()
-                .filter(item -> item.getId().equals(id))
-                .findFirst()
-                .orElseThrow(() -> new NotFoundException("Item not found"));
+        return items.get(id);
     }
 
     @Override
@@ -40,33 +35,31 @@ public class InMemoryItemStorage implements ItemStorage {
     }
 
     @Override
-    public Item createItem(ItemDto itemDto, User user) {
-        log.info("Creating new item {}", itemDto);
-        Item item = ItemMapper.fromDto(itemDto, getNextId(), user);
+    public Item createItem(Item item) {
+        log.info("Creating new item {}", item);
+        item.setId(getNextId());
         items.put(item.getId(), item);
-        return getItem(item.getId());
+        return item;
     }
 
     @Override
     public Item updateItem(ItemDto itemDto, Long itemId) {
         log.info("Updating item with id {}", itemId);
-       if (items.containsKey(itemId)) {
-           Item oldItem = items.get(itemId);
-           if (itemDto.getName() != null) {
-               oldItem.setName(itemDto.getName());
-               items.put(oldItem.getId(), oldItem);
-           }
-           if (itemDto.getDescription() != null) {
-               oldItem.setDescription(itemDto.getDescription());
-               items.put(oldItem.getId(), oldItem);
-           }
-           if (itemDto.getAvailable() != null) {
-               oldItem.setAvailable(Boolean.parseBoolean(itemDto.getAvailable()));
-               items.put(oldItem.getId(), oldItem);
-           }
-           return getItem(itemId);
-       }
-       throw new NotFoundException("Item not found");
+        if (items.containsKey(itemId)) {
+            Item oldItem = items.get(itemId);
+            if (itemDto.getName() != null) {
+                oldItem.setName(itemDto.getName());
+            }
+            if (itemDto.getDescription() != null) {
+                oldItem.setDescription(itemDto.getDescription());
+            }
+            if (itemDto.getAvailable() != null) {
+                oldItem.setAvailable(Boolean.parseBoolean(itemDto.getAvailable()));
+            }
+            items.put(oldItem.getId(), oldItem);
+            return oldItem;
+        }
+        throw new NotFoundException("Item not found");
     }
 
     @Override
@@ -79,32 +72,18 @@ public class InMemoryItemStorage implements ItemStorage {
     }
 
     @Override
-    public List<ItemDto> searchItem(String searchString) {
+    public List<Item> searchItem(String searchString) {
         log.info("Searching for items with {}", searchString);
-        List<ItemDto> itemDtos = new ArrayList<>();
-        List<ItemDto> itemName = items.values().stream()
-                .filter(item -> item.getName().equalsIgnoreCase(searchString))
+        return items.values().stream()
+                .filter(item -> item.getName().equalsIgnoreCase(searchString) ||
+                        item.getDescription().equalsIgnoreCase(searchString))
                 .filter(Item::isAvailable)
-                .map(ItemMapper::toDto)
                 .toList();
-        List<ItemDto> itemDescription = items.values().stream()
-                .filter(item -> item.getDescription().equalsIgnoreCase(searchString))
-                .filter(Item::isAvailable)
-                .map(ItemMapper::toDto)
-                .toList();
-        if (!itemName.isEmpty()) {
-            itemDtos.addAll(itemName);
-        }
-        if (!itemDescription.isEmpty()) {
-            itemDtos.addAll(itemDescription);
-        }
-
-        return itemDtos;
     }
 
     @Override
     public Long getNextId() {
-        long currentMaxId =  items.keySet()
+        long currentMaxId = items.keySet()
                 .stream()
                 .mapToLong(id -> id)
                 .max()

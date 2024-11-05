@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import ru.practicum.shareit.exceptions.NotOwnerException;
+import ru.practicum.shareit.item.dto.CommentDto;
 import ru.practicum.shareit.item.dto.ItemDto;
 
 import java.util.List;
@@ -28,7 +29,7 @@ public class ItemController {
 
     @PostMapping
     public ItemDto createItem(@RequestBody @Valid ItemDto itemDto,
-                              @RequestHeader("X-Sharer-User-Id") Long userId) {
+                              @RequestHeader("X-Sharer-User-Id") Long userId) throws NotOwnerException {
         return itemService.createItem(itemDto, userId);
     }
 
@@ -59,4 +60,10 @@ public class ItemController {
         return itemService.searchItem(text);
     }
 
+    @PostMapping("/{itemId}/comment")
+    public CommentDto postComment(@PathVariable Long itemId,
+                                  @Valid @RequestBody CommentDto commentDto,
+                                  @RequestHeader("X-Sharer-User-Id") long userId) {
+        return itemService.addComment(itemId, userId, commentDto);
+    }
 }

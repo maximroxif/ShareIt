@@ -31,8 +31,7 @@ public class ItemServiceImpl implements ItemService {
     @Override
     public ItemDto getItem(Long id) {
         log.info("Getting item by id: {}", id);
-        Item item = itemRepository.findById(id)
-                .orElseThrow(() -> new NotFoundException("Item not found"));
+        Item item = getItemById(id);
 
         ItemDto dto = ItemMapper.toDto(item);
 
@@ -54,7 +53,7 @@ public class ItemServiceImpl implements ItemService {
     @Override
     public ItemDto createItem(ItemDto itemDto, Long id) {
         log.info("Creating new item: {}", itemDto);
-        User owner = userRepository.findById(id).orElseThrow(() -> new NotFoundException("User not found"));
+        User owner = getUserById(id);
         Item item = ItemMapper.fromDto(itemDto, owner);
         return ItemMapper.toDto(itemRepository.save(item));
     }
@@ -62,11 +61,10 @@ public class ItemServiceImpl implements ItemService {
     @Override
     public ItemDto updateItem(ItemDto itemDto, Long userId, Long itemId) throws NotOwnerException {
         log.info("Updating item: {}", itemDto);
-        Item updateItem = itemRepository.findById(itemId)
-                .orElseThrow(() -> new NotFoundException("Item not found"));
+        Item updateItem = getItemById(itemId);
 
         if (!updateItem.getOwner().getId().equals(userId)) {
-            throw new NotOwnerException("User is not owner of this item");
+            throw new NotOwnerException("User with id " + userId + " is not owner of this item");
         }
 
         if (itemDto.getName() != null) {
@@ -105,15 +103,13 @@ public class ItemServiceImpl implements ItemService {
     @Override
     public CommentDto addComment(Long itemId, long userId, CommentDto commentDto) {
         log.info("Add comment: {}", commentDto);
-        User author = userRepository.findById(userId)
-                .orElseThrow(() -> new NotFoundException("User not found"));
+        User author = getUserById(userId);
 
-        Item item = itemRepository.findById(itemId)
-                .orElseThrow(() -> new NotFoundException("Item not found"));
+        Item item = getItemById(itemId);
 
         boolean hasUserRentedItem = bookingRepository.existsByItemIdAndBookerIdAndEndIsBefore(itemId, userId, LocalDateTime.now());
         if (!hasUserRentedItem) {
-            throw new ConditionsNotMetException("User is not rented yet");
+            throw new ConditionsNotMetException("User with id " + userId + " is not rented yet");
         }
 
         Comment comment = CommentMapper.toComment(commentDto, item, author);
@@ -143,5 +139,15 @@ public class ItemServiceImpl implements ItemService {
         return bookingRepository.findFirstByItemIdAndStartAfterOrderByStartAsc(itemId, localDateTime)
                 .map(Booking::getStart)
                 .orElse(null);
+    }
+
+    private User getUserById(Long userId) {
+        return userRepository.findById(userId)
+                .orElseThrow(() -> new NotFoundException("User with id " + userId + " not found"));
+    }
+
+    private Item getItemById(Long itemId) {
+        return itemRepository.findById(itemId)
+                .orElseThrow(() -> new NotFoundException("Item with id " + itemId + " not found"));
     }
 }

@@ -1,10 +1,14 @@
 package ru.practicum.shareit.item.dto;
 
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Data;
 import lombok.experimental.FieldDefaults;
+
+import java.time.LocalDateTime;
+import java.util.List;
 
 /**
  * TODO Sprint add-controllers.
@@ -18,7 +22,10 @@ public class ItemDto {
     String name;
     @NotBlank
     String description;
-    @NotBlank
-    String available;
+    @NotNull
+    Boolean available;
     Long request;
+    LocalDateTime lastBooking;
+    LocalDateTime nextBooking;
+    List<CommentDto> comments;
 }

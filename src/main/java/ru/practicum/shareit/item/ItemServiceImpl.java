@@ -12,12 +12,15 @@ import ru.practicum.shareit.item.dto.CommentDto;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.model.Comment;
 import ru.practicum.shareit.item.model.Item;
+import ru.practicum.shareit.request.ItemRequest;
+import ru.practicum.shareit.request.ItemRequestRepository;
 import ru.practicum.shareit.user.User;
 import ru.practicum.shareit.user.UserRepository;
 
 import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @AllArgsConstructor
@@ -27,6 +30,7 @@ public class ItemServiceImpl implements ItemService {
     private final UserRepository userRepository;
     private final BookingRepository bookingRepository;
     private final CommentRepository commentRepository;
+    private final ItemRequestRepository itemRequestRepository;
 
     @Override
     public ItemDto getItem(Long id) {
@@ -54,7 +58,16 @@ public class ItemServiceImpl implements ItemService {
     public ItemDto createItem(ItemDto itemDto, Long id) {
         log.info("Creating new item: {}", itemDto);
         User owner = getUserById(id);
-        Item item = ItemMapper.fromDto(itemDto, owner);
+        Item item;
+        if (itemDto.getRequestId() != null && itemDto.getRequestId() != 0) {
+            Optional<ItemRequest> itemRequestOptional = itemRequestRepository.findById(itemDto.getRequestId());
+            if (itemRequestOptional.isEmpty()) {
+                throw new NotFoundException("Request not found");
+            }
+            item = ItemMapper.fromDtoWithRequest(itemDto, owner, itemRequestOptional.get());
+        } else {
+            item = ItemMapper.fromDto(itemDto, owner);
+        }
         return ItemMapper.toDto(itemRepository.save(item));
     }
 

@@ -41,7 +41,7 @@ public class Item {
     @ManyToOne
     @JoinColumn(name = "owner_id")
     User owner;
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "request_id")
     ItemRequest request;
 }

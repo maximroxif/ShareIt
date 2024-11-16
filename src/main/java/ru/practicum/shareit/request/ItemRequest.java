@@ -1,6 +1,8 @@
 package ru.practicum.shareit.request;
 
 import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
@@ -21,6 +23,7 @@ import java.time.LocalDateTime;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class ItemRequest {
     @Id
+            @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
     String description;
     @ManyToOne

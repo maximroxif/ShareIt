@@ -4,9 +4,7 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Data;
 import lombok.experimental.FieldDefaults;
-import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.dto.ItemDtoShort;
-import ru.practicum.shareit.user.User;
 
 import java.time.LocalDateTime;
 import java.util.List;

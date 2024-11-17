@@ -30,6 +30,7 @@ public class ItemController {
     @PostMapping
     ResponseEntity<Object> createItem(@RequestBody @Valid ItemDto itemDto,
                                       @RequestHeader("X-Sharer-User-Id") Long userId) {
+        log.info("Create new item: {}", itemDto);
         return itemClient.createItem(itemDto, userId);
     }
 
@@ -37,26 +38,31 @@ public class ItemController {
     ResponseEntity<Object> updateItem(@RequestBody ItemDto itemDto,
                                       @RequestHeader("X-Sharer-User-Id") Long userId,
                                       @PathVariable Long itemId) {
+        log.info("Update item: {}", itemDto);
         return itemClient.updateItem(itemDto, userId, itemId);
     }
 
     @GetMapping("/{id}")
     ResponseEntity<Object> getItem(@PathVariable Long id) {
+        log.info("Get item: {}", id);
         return itemClient.getItem(id);
     }
 
     @GetMapping
     ResponseEntity<Object> getUserItems(@RequestHeader("X-Sharer-User-Id") Long userId) {
+        log.info("Get user items: {}", userId);
         return itemClient.getUserItem(userId);
     }
 
     @DeleteMapping("/{id}")
     ResponseEntity<Object> deleteItem(@PathVariable Long id) {
+        log.info("Delete item: {}", id);
         return itemClient.deleteItem(id);
     }
 
     @GetMapping("/search")
     ResponseEntity<Object> searchItems(@RequestParam String text) {
+        log.info("Search items: {}", text);
         return itemClient.searchItem(text);
     }
 
@@ -64,6 +70,7 @@ public class ItemController {
     ResponseEntity<Object> postComment(@PathVariable Long itemId,
                                        @Valid @RequestBody CommentDto commentDto,
                                        @RequestHeader("X-Sharer-User-Id") long userId) {
+        log.info("Comment item: {}", itemId);
         return itemClient.addComment(itemId, userId, commentDto);
     }
 }

@@ -16,7 +16,7 @@ public class RequestClient extends BaseClient {
     private static final String API_PREFIX = "/requests";
 
     @Autowired
-    public RequestClient(@Value("http://localhost:9090") String serverUrl, RestTemplateBuilder restTemplateBuilder) {
+    public RequestClient(@Value("${shareit-server.url}") String serverUrl, RestTemplateBuilder restTemplateBuilder) {
         super(restTemplateBuilder
                 .uriTemplateHandler(new DefaultUriBuilderFactory(serverUrl + API_PREFIX))
                 .requestFactory(() -> new HttpComponentsClientHttpRequestFactory())

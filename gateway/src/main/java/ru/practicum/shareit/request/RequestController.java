@@ -24,22 +24,26 @@ public class RequestController {
     @PostMapping
     public ResponseEntity<Object> createRequest(@RequestHeader("X-Sharer-User-Id") long userId,
                                                 @Valid @RequestBody RequestDto requestDto) {
+        log.info("Create request: {}", requestDto);
         return requestClient.createItemRequest(userId, requestDto);
     }
 
     @GetMapping("/all")
     ResponseEntity<Object> getAll(@RequestHeader("X-Sharer-User-Id") long requesterId) {
+        log.info("Get all requests: {}", requesterId);
         return requestClient.findAll(requesterId);
     }
 
     @GetMapping
     ResponseEntity<Object> getRequesterList(@RequestHeader("X-Sharer-User-Id") long requesterId) {
+        log.info("Get requests: {}", requesterId);
         return requestClient.findByRequester(requesterId);
     }
 
     @GetMapping("/{requestId}")
     ResponseEntity<Object> getRequestById(@RequestHeader("X-Sharer-User-Id") long userId,
                                           @PathVariable Long requestId) {
+        log.info("Get request by id: {}", requestId);
         return requestClient.finById(userId, requestId);
     }
 }

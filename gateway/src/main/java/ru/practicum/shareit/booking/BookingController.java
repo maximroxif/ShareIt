@@ -57,11 +57,13 @@ public class BookingController {
     public ResponseEntity<Object> approve(@RequestHeader("X-Sharer-User-Id") Long userId,
                                           @PathVariable Long bookingId,
                                           @RequestParam Boolean approved) {
+        log.info("Approving booking {}, userId={}", bookingId, userId);
         return bookingClient.approve(userId, bookingId, approved);
     }
 
     @GetMapping("/owner")
     public ResponseEntity<Object> getBookingsByOwner(@RequestHeader("X-Sharer-User-Id") long userId) {
+        log.info("Get bookings by owner {}", userId);
         return bookingClient.getOwnerBookings(userId);
     }
 

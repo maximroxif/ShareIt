@@ -1,5 +1,7 @@
 package ru.practicum.shareit.booking.dto;
 
+import ru.practicum.shareit.exceptions.ConditionsNotMetException;
+
 import java.util.Optional;
 
 public enum BookingState {
@@ -22,6 +24,6 @@ public enum BookingState {
                 return Optional.of(state);
             }
         }
-        return Optional.empty();
+        throw new ConditionsNotMetException("Unknown state: " + stringState);
     }
 }

@@ -15,7 +15,7 @@ import java.util.List;
 public class RequestDto {
     private Long id;
 
-    @NotBlank(message = "Описание не может быть пустым")
+    @NotBlank
     private String description;
     private Long requesterId;
     private LocalDateTime created;

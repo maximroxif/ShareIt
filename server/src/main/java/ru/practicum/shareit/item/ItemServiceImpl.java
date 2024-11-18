@@ -18,7 +18,6 @@ import ru.practicum.shareit.user.User;
 import ru.practicum.shareit.user.UserRepository;
 
 import java.time.LocalDateTime;
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -104,9 +103,6 @@ public class ItemServiceImpl implements ItemService {
     @Override
     public List<ItemDto> searchItem(String text) {
         log.info("Searching item: {}", text);
-        if (text == null || text.trim().isEmpty()) {
-            return Collections.emptyList();
-        }
         return itemRepository.search(text.toUpperCase()).stream()
                 .filter(Item::isAvailable)
                 .map(ItemMapper::toDto)
